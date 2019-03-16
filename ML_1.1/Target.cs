@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace ML_1._1
 {
@@ -23,7 +16,7 @@ namespace ML_1._1
 
         public void Draw (Graphics g)
         {
-            g.FillEllipse(Brushes.Blue, position.X - (radius / 2), position.Y - (radius / 2), radius * 2, radius * 2);
+            g.FillEllipse(Brushes.Blue, position.X - (radius), position.Y - (radius), radius * 2, radius * 2);
         }
 
         public Point Position

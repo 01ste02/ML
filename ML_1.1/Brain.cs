@@ -12,17 +12,18 @@ namespace ML_1._1
     {
         private Vector2[] directions;
         private int step = 0;
+        private Random random;
 
-        public Brain (int maxDirections)
+        public Brain (int maxDirections, Random random)
         {
             directions = new Vector2[maxDirections];
-            randomize();
+            this.random = random;
+            Randomize();
 
         }
 
-        private void randomize ()
+        private void Randomize ()
         {
-            Random random = new Random();
             //Create random instructions of in which direction to go. Then convert the angle from radians to an X and Y value using trigonometry. Seems to be unique between all dots.
             double[] doubles = new double[directions.Length];
             for (int i = 0; i < directions.Length; i++)
@@ -35,7 +36,7 @@ namespace ML_1._1
         public Brain Clone ()
         {
             //Make a new, identical, brain
-            Brain clone = new Brain(directions.Length);
+            Brain clone = new Brain(directions.Length, random);
             for (int i = 0; i < directions.Length; i++)
             {
                 clone.directions[i] = directions[i];
@@ -44,11 +45,10 @@ namespace ML_1._1
             return clone;
         }
 
-        public void Mutate ()
+        public void Mutate (Random random)
         {
             //Mutate the babies in some cases. Randomize some new directions.
             double mutationRate = 0.01;
-            Random random = new Random();
 
             for (int i = 0; i < directions.Length; i++)
             {

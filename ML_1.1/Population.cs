@@ -12,6 +12,7 @@ namespace ML_1._1
     class Population
     {
         private Dot[] dots;
+        private Random random;
 
         private float fitnessSum;
         private int generation = 1;
@@ -20,17 +21,18 @@ namespace ML_1._1
 
         int minStep = 1000;
 
-        public Population (int size, Form1 sender, int x, int y, int radius, int maxSteps, int width, int height)
+        public Population (int size, NoObs sender, int x, int y, int radius, int maxSteps, int width, int height, Random random)
         {
             //Make an array with dots and initialize all of them
+            this.random = random;
             dots = new Dot[size];
             for (int i = 0; i < size; i++)
             {
-                dots[i] = new Dot(sender, x, y, radius, maxSteps, width, height);
+                dots[i] = new Dot(sender, x, y, radius, maxSteps, width, height, random);
             }
         }
 
-        public void draw (Graphics g)
+        public void Draw (Graphics g)
         {
             //Draw each and every dot. Dot 0 is drawn by itself for no particular reason.
             for (int i = 1; i < dots.Length; i++)
@@ -40,7 +42,7 @@ namespace ML_1._1
             dots[0].Draw(g);
         }
 
-        public void update ()
+        public void Update ()
         {
             //For all dots, check if the dot has taken more steps to get to the goal than the previously lowest number of steps. If so, kill it (because it is worse than the last generation)
             for (int i = 0; i < dots.Length; i++)
@@ -52,28 +54,24 @@ namespace ML_1._1
                 else
                 {
                     //Update the dot if not.
-                    dots[i].update();
+                    dots[i].Update();
                 }
             }
-            //Console.WriteLine("X-coord: " + dots[0].Position.X);
-            //Console.WriteLine("Y-coord: " + dots[0].Position.Y);
-            //Console.WriteLine(dots[0].Brain.Directions[dots[0].Brain.Step].Length());
-            //Console.WriteLine(dots[0].Brain.Step);
 
             //Debug function to see how many unique values there are between all of the dots
-            occurances();
+            //occurances();
         }
 
-        public void calculateFitness ()
+        public void CalculateFitness ()
         {
             for (int i = 0; i < dots.Length; i++)
             {
-                dots[i].calculateFitness();
+                dots[i].CalculateFitness();
             }
         }
 
         //If not all dots are dead, there is at least one that has not reached the goal or died. Return false.
-        public bool allDotsDead ()
+        public bool AllDotsDead ()
         {
             for (int i = 0; i < dots.Length; i++)
             {
@@ -88,11 +86,11 @@ namespace ML_1._1
 
 
         //Self-explanatory. Make a new generation and keep the best one from the previous generation unchanged to keep track of wether they got worse or not.
-        public void naturalSelection ()
+        public void NaturalSelection ()
         {
             Dot[] newDots = new Dot[dots.Length];
-            setBestDot();
-            calculateFitnessSum();
+            SetBestDot();
+            CalculateFitnessSum();
 
             //Best dot
             newDots[0] = dots[bestDotIndex].Baby();
@@ -101,7 +99,7 @@ namespace ML_1._1
             for (int i = 1; i < newDots.Length; i++)
             {
                 //Mutate the others after cloning them.
-                Dot parent = selectParent();
+                Dot parent = SelectParent();
 
                 newDots[i] = parent.Baby();
             }
@@ -110,7 +108,7 @@ namespace ML_1._1
             generation++;
         }
 
-        public void calculateFitnessSum ()
+        public void CalculateFitnessSum ()
         {
             //Sum the fitnessSums
             fitnessSum = 0;
@@ -120,10 +118,9 @@ namespace ML_1._1
             }
         }
 
-        public Dot selectParent ()
+        public Dot SelectParent ()
         {
             //Choose the best dots to be cloned into a new generation
-            Random random = new Random();
             float rand = (float)random.NextDouble() * fitnessSum;
 
             float runningSum = 0;
@@ -140,15 +137,15 @@ namespace ML_1._1
             return null;
         }
 
-        public void mutateBabies ()
+        public void MutateBabies ()
         {
             for (int i = 1; i < dots.Length; i++)
             {
-                dots[i].Brain.Mutate();
+                dots[i].Brain.Mutate(random);
             }
         }
 
-        public void setBestDot ()
+        public void SetBestDot ()
         {
             //Return the dot with the highest fitness
             float max = 0;
@@ -172,7 +169,7 @@ namespace ML_1._1
             }
         }
 
-        public void occurances ()
+        public void Occurances ()
         {
             int uCountX = 0;
             int uCountY = 0;
@@ -226,6 +223,14 @@ namespace ML_1._1
             }
             Console.WriteLine("Unique X: " + uCountX);
             Console.WriteLine("Unique Y: " + uCountY);
+        }
+
+        public string GenerationText
+        {
+            get
+            {
+                return "Generation: " + generation.ToString();
+            }
         }
     }
 }

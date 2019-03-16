@@ -1,6 +1,6 @@
 ﻿namespace ML_1._1
 {
-    partial class Form1
+    partial class NoObs
     {
         /// <summary>
         /// Required designer variable.
@@ -28,21 +28,34 @@
         /// </summary>
         private void InitializeComponent ()
         {
+            this.lblGen = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // Form1
+            // lblGen
+            // 
+            this.lblGen.AutoSize = true;
+            this.lblGen.Location = new System.Drawing.Point(12, 9);
+            this.lblGen.Name = "lblGen";
+            this.lblGen.Size = new System.Drawing.Size(71, 13);
+            this.lblGen.TabIndex = 0;
+            this.lblGen.Text = "Generation: 1";
+            // 
+            // noObs
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1064, 761);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Controls.Add(this.lblGen);
+            this.Name = "noObs";
+            this.Text = "Dots without obstacles";
             this.Shown += new System.EventHandler(this.Form1_Shown);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
+        private System.Windows.Forms.Label lblGen;
     }
 }
 

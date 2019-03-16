@@ -33,11 +33,12 @@ namespace ML_1._1
         private int startRadius;
 
         private Brain brain;
-        private Form1 sender;
+        private NoObs sender;
+        private Random random;
 
         private Color color;
 
-        public Dot (Form1 sender, int xInit, int yInit, int radiusInit, int maxSteps, int width, int height)
+        public Dot (NoObs sender, int xInit, int yInit, int radiusInit, int maxSteps, int width, int height, Random random)
         {            
             position = new Vector2(xInit, yInit);
             vel = new Vector2(0, 0);
@@ -52,13 +53,14 @@ namespace ML_1._1
 
             radius = radiusInit;
 
-            brain = new Brain(maxSteps);
+            this.random = random;
+
+            brain = new Brain(maxSteps, random);
             maxMovements = maxSteps;
 
             this.sender = sender;
 
-            Random rand = new Random();
-            color = Color.FromArgb(1, rand.Next(0, 255), rand.Next(0, 255), rand.Next(0, 255)); //Random colors to distinguish different dots from each other
+            color = Color.FromArgb(1, random.Next(0, 255), random.Next(0, 255), random.Next(0, 255)); //Random colors to distinguish different dots from each other
         }
 
         public void Draw (Graphics g)
@@ -70,12 +72,12 @@ namespace ML_1._1
             }
             else
             {
-                Brush brush = new SolidBrush(color);
-                g.FillEllipse(brush, position.X - (radius / 2), position.Y - (radius / 2), radius * 2, radius * 2);
+                Brush brush = new SolidBrush(Color.Black);
+                g.FillEllipse(brush, position.X - (radius), position.Y - (radius), radius * 2, radius * 2);
             }
         }
 
-        public void move ()
+        public void Move ()
         {
             //If there are more steps, set the acceleration to the current step. If not, you are dead
             if (brain.Directions.Length > brain.Step)
@@ -102,11 +104,11 @@ namespace ML_1._1
             position = Vector2.Add(position, vel);
         }
 
-        public void update ()
+        public void Update ()
         {
            if (isAlive && !reachedGoal)
             {
-                move();
+                Move();
                 //If touching edges, you are dead. If you touched the goal, you won!
                 if (width - (position.X + radius) <= 0 | position.X - radius <= 0 | height - (position.Y + radius) <= 0 | position.Y - radius <= 0)
                 {
@@ -136,7 +138,7 @@ namespace ML_1._1
             return true;
         }
 
-        public void calculateFitness ()
+        public void CalculateFitness ()
         {
             //If you reached the goal, you are more suitable for evolving than those who did not. The number of steps it took to touch the goal also matter in your score (lower is better)
             if (reachedGoal)
@@ -154,8 +156,10 @@ namespace ML_1._1
         public Dot Baby ()
         {
             //Make an identical clone
-            Dot clone = new Dot(sender, startX, startY, startRadius, maxMovements, width, height);
-            clone.brain = brain.Clone();
+            Dot clone = new Dot(sender, startX, startY, startRadius, maxMovements, width, height, random)
+            {
+                brain = brain.Clone()
+            };
             return clone;
         }
 

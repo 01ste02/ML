@@ -11,39 +11,44 @@ using System.Timers;
 
 namespace ML_1._1
 {
-    public partial class Form1 : Form
+    public partial class NoObs : Form
     {
         public Target target;
         private Population population;
+        private Random random = new Random();
 
-        private Form1 form1;
+        private int gen = 1;
+
+        private NoObs form1;
 
         private System.Timers.Timer timer;
 
-        public Form1 ()
+        public NoObs ()
         {
             InitializeComponent();
-            
         }
 
         protected override void OnPaint (PaintEventArgs e)
         {
             BackColor = Color.White;
-
+            
             //Draw the target dot (blue)
             target.Draw(e.Graphics);
 
             //If all dots are dead, then do some calculations into who was best, make clones and evolve them. Otherwise they should be updated in position and be drawn
-            if (population.allDotsDead())
+            if (population.AllDotsDead())
             {
-                population.calculateFitness();
-                population.naturalSelection();
-                population.mutateBabies();
+                lblGen.Text = "Generation: " + gen.ToString();
+                lblGen.Focus();
+                gen++;
+                population.CalculateFitness();
+                population.NaturalSelection();
+                population.MutateBabies();
             }
             else
             {
-                population.update();
-                population.draw(e.Graphics);
+                population.Update();
+                population.Draw(e.Graphics);
             }
         }
 
@@ -57,7 +62,7 @@ namespace ML_1._1
         private void Form1_Shown (object sender, EventArgs e)
         {
             target = new Target(20, ClientSize.Width / 2, 100);
-            population = new Population(1000, this, ClientSize.Width / 3, ClientSize.Height - 200, 5, 200, ClientSize.Width, ClientSize.Height);
+            population = new Population(10000, this, ClientSize.Width / 3, ClientSize.Height - 200, 5, 200, ClientSize.Width, ClientSize.Height, random);
 
             form1 = this;
 
@@ -66,8 +71,10 @@ namespace ML_1._1
 
 
             //Handle the timer
-            timer = new System.Timers.Timer();
-            timer.Interval = 10;
+            timer = new System.Timers.Timer
+            {
+                Interval = 10
+            };
 
             timer.Elapsed += OnTimedEvent;
             timer.AutoReset = true;
